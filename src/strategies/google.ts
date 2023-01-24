@@ -11,7 +11,7 @@ passport.use(new GoogleStrategy({
         clientSecret: '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',
         callbackURL: 'http://localhost:3000/auth/google/redirect'
     },
-    async function (accessToken: string, refreshToken: string, profile: {emails: {value: string}[]} & Profile, done: Done) {
+    async function (accessToken: string, refreshToken: string, profile: Profile, done: Done) {
         try {
             console.log(profile)
             const user = await GoogleUser.findOne({
@@ -26,7 +26,7 @@ passport.use(new GoogleStrategy({
                 const newUser = await GoogleUser.create({
                     id: profile.id,
                     login: profile.displayName,
-                    email: profile.emails[0].value,
+                    email: profile.emails?.values().next().value,
                 })
                 newUser.provider = 'google'
                 return done(null, newUser)
