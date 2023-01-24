@@ -1,4 +1,5 @@
-import {Request, Response} from "express"
+import {NextFunction, Request, Response} from "express"
+import {Session} from "express-session"
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
 const crypto = require('crypto')
@@ -20,7 +21,7 @@ class Auth {
         res.status(200).json('Выберите способ авторизации')
     }
 
-    async register(req: Request, res: Response, next: any) {
+    async register(req: Request, res: Response, next: NextFunction) {
         try {
             const email = req.body.email
             const password = req.body.password
@@ -52,7 +53,7 @@ class Auth {
                         from: 'Deimos Corps 👻 <dimasamusch@yandex.ru>', // sender address
                         to: email,
                         subject: "Подтверждение регистрации", // Subject line
-                        html: `Для подтверждения регистрации нажмите <a href="http://94.19.156.115:3000/auth/verify/?token=${token}" onMouseOver="window.status=’сокращенная ссылка’; return true" onMouseOut="window.status=»; return true">сюда</a>`
+                        html: `Для подтверждения регистрации нажмите <a href="http://94.19.156.115:3000/auth/verify/?token=${token}">сюда</a>`
                     })
                     next()
                 })
@@ -62,7 +63,7 @@ class Auth {
         }
     }
 
-    async verify(req: Request, res: Response, next: any) {
+    async verify(req: Request, res: Response, next: NextFunction) {
         const token = req.query.token
 
         const tokenDb = await Token.findOne({
@@ -88,7 +89,9 @@ class Auth {
         }
     }
 
-    logout(req: any, res: Response) {
+
+
+    logout(req: { session: Session } & Request , res: Response) {
         req.session.destroy(() => {
             res.redirect('/auth')
         })

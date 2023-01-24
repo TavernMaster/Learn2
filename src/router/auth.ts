@@ -15,7 +15,7 @@ router.get('/verify', controller.verify)
 router.get('/discord', passport.authenticate('discord'))
 router.get('/discord/redirect', passport.authenticate('discord', {
     failureRedirect: '/auth'
-}), function(req: any, res: Response) {
+}), function(req: Request, res: Response) {
     res.status(200).redirect('/')  // Successful auth
 })
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }))

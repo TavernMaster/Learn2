@@ -1,13 +1,17 @@
+import {Profile} from "passport";
+
 const passport = require('passport')
 const {Strategy: GoogleStrategy} = require('passport-google-oauth20')
 const GoogleUser = require('../db').models.GoogleUser
+
+type Done = (err: unknown | null, user: Profile | null) => {}
 
 passport.use(new GoogleStrategy({
         clientID: '26553528019-hdloigc48g40kflquvudhfngqgld5lhm.apps.googleusercontent.com',
         clientSecret: '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',
         callbackURL: 'http://localhost:3000/auth/google/redirect'
     },
-    async function (accessToken: string, refreshToken: string, profile: any, done: any) {
+    async function (accessToken: string, refreshToken: string, profile: {emails: {value: string}[]} & Profile, done: Done) {
         try {
             console.log(profile)
             const user = await GoogleUser.findOne({

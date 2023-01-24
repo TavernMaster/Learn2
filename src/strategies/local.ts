@@ -1,10 +1,14 @@
+import {Profile} from "passport";
+
 const passport = require('passport')
 const bcrypt = require('bcrypt')
 const {Strategy: LocalStrategy} = require('passport-local')
 const User = require('../db').models.User
 
+type Done = (err: unknown | null, user: Profile | null) => {}
+
 passport.use(new LocalStrategy({usernameField: 'email'},
-    async function verify(email: string, password: string, done: any) {
+    async function verify(email: string, password: string, done: Done) {
         try {
 
             console.log(email, password)
@@ -16,7 +20,7 @@ passport.use(new LocalStrategy({usernameField: 'email'},
             })
 
             if (!user) {
-                return done(null, false)
+                return done(null, null)
             }
 
             bcrypt.compare(password, user.password, function(err: any, result: boolean) {
@@ -25,7 +29,7 @@ passport.use(new LocalStrategy({usernameField: 'email'},
                     user.provider = 'local'
                     return done(null, user)
                 } else {
-                    return done(null, false)
+                    return done(null, null)
                 }
             })
 

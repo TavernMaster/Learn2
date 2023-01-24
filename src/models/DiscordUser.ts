@@ -5,7 +5,6 @@ class DiscordUser extends Model {
     declare id: number
     declare email: string
     declare login: string
-    declare password: string
 }
 
 DiscordUser.init({
